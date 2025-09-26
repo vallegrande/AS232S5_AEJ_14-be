@@ -42,8 +42,8 @@ jobs:
           dockerfile: Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/image_generator:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/image_generator:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/as232s5_aej_14-be:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/as232s5_aej_14-be:${{ github.sha }}
 
 
 
