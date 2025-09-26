@@ -6,12 +6,12 @@ spring:
   application:
     name: image-Generator
   r2dbc:
-    url: r2dbc:postgresql://ep-spring-mode-a839f09f-pooler.eastus2.azure.neon.tech/image_generator
+    url: r2dbc:postgresql://ep-spring-mode-a839f09f-pooler.eastus2.azure.neon.tech:5432/image_generator?sslMode=require
     username: neondb_owner
     password: npg_IJdQEZuF4BN3
-    properties:
-      sslmode: require
-      channelBinding: require
+    pool:
+      validation-query: SELECT 1
+      max-idle-time: 30m
 
 rapidapi:
   url: https://ai-text-to-image-generator-flux-free-api.p.rapidapi.com

@@ -21,6 +21,9 @@ public class ImageGenerator {
 
     private String size;
 
+    @Column(value = "image_url")
+    private String imageUrl;
+
     @Column(value = "creation_date")
     private LocalDateTime creationDate;
 

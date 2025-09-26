@@ -2,7 +2,6 @@ package pe.edu.vallegrande.imageGenerator.rest;
 
 import pe.edu.vallegrande.imageGenerator.model.ImageGenerator;
 import pe.edu.vallegrande.imageGenerator.service.ImageGeneratorService;
-import pe.edu.vallegrande.imageGenerator.service.impl.ImageGeneratorServiceImpl.ImageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -20,7 +19,7 @@ public class ImageGeneratorRest {
         this.imageGeneratorService = imageGeneratorService;
     }
 
-    // Listar todos los registros
+    // Listar todos
     @GetMapping
     public Flux<ImageGenerator> findAll() {
         return imageGeneratorService.findAll();
@@ -32,25 +31,30 @@ public class ImageGeneratorRest {
         return imageGeneratorService.findById(id);
     }
 
-    // Guardar (genera imagen + almacena en BD)
-    @PostMapping("/save")
-    public Mono<ImageGenerator> save(@RequestBody ImageRequest request) {
+    // Generar imagen + guardar en BD
+    @PostMapping("/generate")
+    public Mono<ImageGenerator> generate(@RequestBody ImageGenerator request) {
         return imageGeneratorService.generateImage(
-                request.prompt(),
-                request.style_id(),
-                request.size()
+                request.getPrompt(),
+                request.getStyleId(),
+                request.getSize()
         );
     }
 
-    // Actualizar un registro
+    // Actualizar
     @PutMapping("/update/{id}")
-    public Mono<ImageGenerator> update(@PathVariable Long id, @RequestBody ImageRequest request) {
+    public Mono<ImageGenerator> update(@PathVariable Long id, @RequestBody ImageGenerator request) {
         return imageGeneratorService.update(
                 id,
-                request.prompt(),
-                request.style_id(),
-                request.size()
+                request.getPrompt(),
+                request.getStyleId(),
+                request.getSize()
         );
     }
 
+    // Eliminar
+    @DeleteMapping("/delete/{id}")
+    public Mono<Void> delete(@PathVariable Long id) {
+        return imageGeneratorService.delete(id);
+    }
 }

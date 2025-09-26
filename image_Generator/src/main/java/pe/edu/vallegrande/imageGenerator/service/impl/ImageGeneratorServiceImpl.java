@@ -11,6 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -22,30 +24,30 @@ public class ImageGeneratorServiceImpl implements ImageGeneratorService {
     @Autowired
     public ImageGeneratorServiceImpl(ImageGeneratorRepository repository, WebClient webClient) {
         this.repository = repository;
-        this.webClient = webClient;
+        this.webClient = webClient; // ✅ usa el bean configurado en WebClientConfig
     }
 
     @Override
     public Flux<ImageGenerator> findAll() {
-        log.info("Mostrando todas las solicitudes de generación de imágenes");
+        log.info("Mostrando todas las solicitudes");
         return repository.findAll();
     }
 
     @Override
     public Mono<ImageGenerator> findById(Long id) {
-        log.info("Buscando por ID = {}", id);
+        log.info("Buscando por ID={}", id);
         return repository.findById(id);
     }
 
     @Override
     public Mono<ImageGenerator> save(String prompt, int styleId, String size) {
-        log.info("Guardando nueva solicitud de imagen con prompt = {}", prompt);
+        log.info("Guardando con prompt={}", prompt);
         return generateImage(prompt, styleId, size);
     }
 
     @Override
     public Mono<ImageGenerator> update(Long id, String prompt, int styleId, String size) {
-        log.info("Actualizando solicitud con ID = {}", id);
+        log.info("Actualizando ID={}", id);
         return repository.findById(id)
                 .flatMap(existing -> {
                     existing.setPrompt(prompt);
@@ -56,19 +58,24 @@ public class ImageGeneratorServiceImpl implements ImageGeneratorService {
                 });
     }
 
-    // Record para request hacia RapidAPI
-    public record ImageRequest(String prompt, int style_id, String size) {}
-
-    // Clase interna para mapear la respuesta de RapidAPI
+    // ✅ Clase para mapear respuesta de RapidAPI
     public static class ApiResponse {
-        public String url; // aquí recibes la URL de la imagen generada, pero no la guardamos en DB
+        public List<Output> output;
+
+        public static class Output {
+            public String image; // URL de la imagen generada
+        }
     }
 
     @Override
     public Mono<ImageGenerator> generateImage(String prompt, int styleId, String size) {
         return webClient.post()
-                .uri("/generate-image") // <-- Ajusta al endpoint real de RapidAPI
-                .bodyValue(new ImageRequest(prompt, styleId, size))
+                .uri("/aaaaaaaaaaaaaaaaaiimagegenerator/quick.php")
+                .bodyValue(Map.of(
+                        "prompt", prompt,
+                        "style_id", styleId,
+                        "size", size
+                ))
                 .retrieve()
                 .bodyToMono(ApiResponse.class)
                 .flatMap(response -> {
@@ -76,21 +83,37 @@ public class ImageGeneratorServiceImpl implements ImageGeneratorService {
                     entity.setPrompt(prompt);
                     entity.setStyleId(styleId);
                     entity.setSize(size);
+
+                    // ✅ Usamos la primera imagen del array output
+                    if (response.output != null && !response.output.isEmpty()) {
+                        entity.setImageUrl(response.output.get(0).image);
+                        log.info("Imagen generada: {}", entity.getImageUrl());
+                    } else {
+                        entity.setImageUrl(null);
+                        log.warn("No se recibió imagen desde la API");
+                    }
+
                     entity.setCreationDate(LocalDateTime.now());
                     entity.setUpdateDate(LocalDateTime.now());
-                    log.info("Imagen generada (URL={}): Guardando en BD {}", response.url, entity);
-
                     return repository.save(entity);
                 })
                 .onErrorResume(e -> {
-                    log.error("Error al consumir API de RapidAPI: {}", e.getMessage(), e);
+                    log.error("Error en API: {}", e.getMessage());
+
                     ImageGenerator entity = new ImageGenerator();
                     entity.setPrompt(prompt);
                     entity.setStyleId(styleId);
                     entity.setSize(size);
+                    entity.setImageUrl(null);
                     entity.setCreationDate(LocalDateTime.now());
                     entity.setUpdateDate(LocalDateTime.now());
                     return repository.save(entity);
                 });
+    }
+
+    @Override
+    public Mono<Void> delete(Long id) {
+        log.info("Eliminando ID={}", id);
+        return repository.deleteById(id);
     }
 }
