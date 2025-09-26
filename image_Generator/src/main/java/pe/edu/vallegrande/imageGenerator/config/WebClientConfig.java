@@ -9,21 +9,21 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfig {
 
     @Value("${rapidapi.url}")
-    private String apiUrl;
+        private String apiUrl;
 
     @Value("${rapidapi.host}")
-    private String apiHost;
+                private String apiHost;
 
     @Value("${rapidapi.apikey}")
-    private String apiKey;
+                        private String apiKey;
 
     @Bean
-    public WebClient imageWebClient() {
-        return WebClient.builder()
-                .baseUrl(apiUrl)
-                .defaultHeader("x-api-host", apiHost)
-                .defaultHeader("x-api-key", apiKey)
-                .defaultHeader("Content-Type", "application/json")
-                .build();
+public WebClient imageWebClient() {
+return WebClient.builder()
+    .baseUrl(apiUrl)
+    .defaultHeader("X-RapidAPI-Host", apiHost)
+    .defaultHeader("X-RapidAPI-Key", apiKey)
+    .defaultHeader("Content-Type", "application/json")
+    .build();
     }
 }

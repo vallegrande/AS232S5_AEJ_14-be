@@ -24,7 +24,7 @@ public class ImageGeneratorServiceImpl implements ImageGeneratorService {
     @Autowired
     public ImageGeneratorServiceImpl(ImageGeneratorRepository repository, WebClient webClient) {
         this.repository = repository;
-        this.webClient = webClient; // ✅ usa el bean configurado en WebClientConfig
+        this.webClient = webClient;
     }
 
     @Override
@@ -41,8 +41,15 @@ public class ImageGeneratorServiceImpl implements ImageGeneratorService {
 
     @Override
     public Mono<ImageGenerator> save(String prompt, int styleId, String size) {
-        log.info("Guardando con prompt={}", prompt);
-        return generateImage(prompt, styleId, size);
+        log.info("Guardando en BD sin generar imagen: {}", prompt);
+        ImageGenerator entity = new ImageGenerator();
+        entity.setPrompt(prompt);
+        entity.setStyleId(styleId);
+        entity.setSize(size);
+        entity.setImageUrl(null);
+        entity.setCreationDate(LocalDateTime.now());
+        entity.setUpdateDate(LocalDateTime.now());
+        return repository.save(entity);
     }
 
     @Override
@@ -58,22 +65,19 @@ public class ImageGeneratorServiceImpl implements ImageGeneratorService {
                 });
     }
 
-    // ✅ Clase para mapear respuesta de RapidAPI
+    // ✅ Clase para mapear la respuesta real de RapidAPI (Flux Free API)
     public static class ApiResponse {
-        public List<Output> output;
-
-        public static class Output {
-            public String image; // URL de la imagen generada
-        }
+        public String status;
+        public List<String> output; // esta API devuelve un array de URLs
     }
 
     @Override
     public Mono<ImageGenerator> generateImage(String prompt, int styleId, String size) {
         return webClient.post()
-                .uri("/aaaaaaaaaaaaaaaaaiimagegenerator/quick.php")
+                .uri("/generate") // ✅ endpoint correcto en esta API
                 .bodyValue(Map.of(
                         "prompt", prompt,
-                        "style_id", styleId,
+                        "style", String.valueOf(styleId), // 👈 algunos esperan string
                         "size", size
                 ))
                 .retrieve()
@@ -84,9 +88,8 @@ public class ImageGeneratorServiceImpl implements ImageGeneratorService {
                     entity.setStyleId(styleId);
                     entity.setSize(size);
 
-                    // ✅ Usamos la primera imagen del array output
                     if (response.output != null && !response.output.isEmpty()) {
-                        entity.setImageUrl(response.output.get(0).image);
+                        entity.setImageUrl(response.output.get(0));
                         log.info("Imagen generada: {}", entity.getImageUrl());
                     } else {
                         entity.setImageUrl(null);
@@ -99,7 +102,6 @@ public class ImageGeneratorServiceImpl implements ImageGeneratorService {
                 })
                 .onErrorResume(e -> {
                     log.error("Error en API: {}", e.getMessage());
-
                     ImageGenerator entity = new ImageGenerator();
                     entity.setPrompt(prompt);
                     entity.setStyleId(styleId);

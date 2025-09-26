@@ -1,60 +1,59 @@
 package pe.edu.vallegrande.imageGenerator.rest;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pe.edu.vallegrande.imageGenerator.dto.ImageGeneratorDTO;
 import pe.edu.vallegrande.imageGenerator.model.ImageGenerator;
 import pe.edu.vallegrande.imageGenerator.service.ImageGeneratorService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/image-generator")
+@RequestMapping("/api/images")
+@RequiredArgsConstructor
 public class ImageGeneratorRest {
 
-    private final ImageGeneratorService imageGeneratorService;
+    private final ImageGeneratorService service;
 
-    @Autowired
-    public ImageGeneratorRest(ImageGeneratorService imageGeneratorService) {
-        this.imageGeneratorService = imageGeneratorService;
-    }
-
-    // Listar todos
+    // 🔹 Listar todas
     @GetMapping
-    public Flux<ImageGenerator> findAll() {
-        return imageGeneratorService.findAll();
+    public Flux<ImageGenerator> getAll() {
+        return service.findAll();
     }
 
-    // Buscar por ID
+    // 🔹 Buscar por ID
     @GetMapping("/{id}")
-    public Mono<ImageGenerator> findById(@PathVariable Long id) {
-        return imageGeneratorService.findById(id);
+    public Mono<ResponseEntity<ImageGenerator>> getById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    // Generar imagen + guardar en BD
+    // 🔹 Guardar sin generar imagen
+    @PostMapping("/save")
+    public Mono<ImageGenerator> save(@RequestBody ImageGeneratorDTO dto) {
+        return service.save(dto.getPrompt(), dto.getStyleId(), dto.getSize());
+    }
+
+    // 🔹 Generar imagen con API + guardar en BD
     @PostMapping("/generate")
-    public Mono<ImageGenerator> generate(@RequestBody ImageGenerator request) {
-        return imageGeneratorService.generateImage(
-                request.getPrompt(),
-                request.getStyleId(),
-                request.getSize()
-        );
+    public Mono<ImageGenerator> generateImage(@RequestBody ImageGeneratorDTO dto) {
+        return service.generateImage(dto.getPrompt(), dto.getStyleId(), dto.getSize());
     }
 
-    // Actualizar
-    @PutMapping("/update/{id}")
-    public Mono<ImageGenerator> update(@PathVariable Long id, @RequestBody ImageGenerator request) {
-        return imageGeneratorService.update(
-                id,
-                request.getPrompt(),
-                request.getStyleId(),
-                request.getSize()
-        );
+    // 🔹 Actualizar
+    @PutMapping("/{id}")
+    public Mono<ResponseEntity<ImageGenerator>> update(@PathVariable Long id, @RequestBody ImageGeneratorDTO dto) {
+        return service.update(id, dto.getPrompt(), dto.getStyleId(), dto.getSize())
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    // Eliminar
-    @DeleteMapping("/delete/{id}")
-    public Mono<Void> delete(@PathVariable Long id) {
-        return imageGeneratorService.delete(id);
+    // 🔹 Eliminar
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Void>> delete(@PathVariable Long id) {
+        return service.delete(id)
+                .then(Mono.just(ResponseEntity.noContent().<Void>build()));
     }
 }
