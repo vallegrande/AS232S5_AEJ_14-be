@@ -1,13 +1,13 @@
-package pe.edu.vallegrande.imageGenerator;
+package pe.edu.vallegrande.vallegrande;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ImageGeneratorApplication {
+public class JossueApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ImageGeneratorApplication.class, args);
+		SpringApplication.run(JossueApplication.class, args);
 	}
 
 }

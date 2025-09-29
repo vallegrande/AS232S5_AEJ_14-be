@@ -1,12 +1,13 @@
 server:
-  port: ${PORT:8085}  # Valor por defecto si PORT no está configurado
-  url: ${SERVER_URL:http://localhost:8085}  # Valor por defecto si SERVER_URL no está configurado
+  port: ${PORT:8085}
+  url: ${SERVER_URL:http://localhost:8085}
 
 spring:
   application:
-    name: image-Generator
+    name: ai-chatbot
+
   r2dbc:
-    url: r2dbc:postgresql://ep-spring-mode-a839f09f-pooler.eastus2.azure.neon.tech:5432/image_generator?ssl=true
+    url: r2dbc:postgresql://ep-spring-mode-a839f09f-pooler.eastus2.azure.neon.tech/chat_messages?ssl=true
     username: neondb_owner
     password: npg_IJdQEZuF4BN3
     pool:
@@ -14,8 +15,8 @@ spring:
       max-idle-time: 30m
 
 rapidapi:
-  url: https://ai-text-to-image-generator-flux-free-api.p.rapidapi.com
-  host: ai-text-to-image-generator-flux-free-api.p.rapidapi.com
+  url: https://ai-chatbot-ai-chatbot-multi-lang.p.rapidapi.com
+  host: ai-chatbot-ai-chatbot-multi-lang.p.rapidapi.com
   apikey: 19563912e8msh910ec9423e2adbep1052e9jsn390a6a17afd4
 
 logging:
