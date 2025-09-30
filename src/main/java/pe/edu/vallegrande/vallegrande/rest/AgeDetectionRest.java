@@ -5,22 +5,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.vallegrande.vallegrande.model.AgeDetection;
 import pe.edu.vallegrande.vallegrande.service.AgeDetectionService;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/age-detection")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*") // 🔹 Permite peticiones desde cualquier frontend
 public class AgeDetectionRest {
 
     private final AgeDetectionService service;
 
-    // 🔹 Listar todos los registros
+    // 🔹 Listar todos los registros como array JSON
     @GetMapping
-    public Flux<AgeDetection> getAll() {
-        return service.findAll();
+    public Mono<List<AgeDetection>> getAll() {
+        return service.findAll().collectList();
     }
 
     // 🔹 Buscar por ID
