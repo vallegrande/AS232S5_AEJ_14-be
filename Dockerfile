@@ -10,3 +10,5 @@ FROM openjdk:17-alpine
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# versión actualizada para probar pipeline
