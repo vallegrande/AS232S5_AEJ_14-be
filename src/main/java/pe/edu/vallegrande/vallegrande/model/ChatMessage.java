@@ -26,3 +26,5 @@ public class ChatMessage {
     @Column("creation_date")
     private LocalDateTime creationDate;
 }
+
+  
