@@ -5,10 +5,8 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run with Java
-FROM openjdk:17-alpine
+# Stage 2: Run with Java (actualizado)
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-# versión actualizada para probar pipeline
