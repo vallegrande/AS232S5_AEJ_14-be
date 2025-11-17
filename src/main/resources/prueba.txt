@@ -1,0 +1,14 @@
+# Levantar
+docker compose up -d
+
+# Ver estado
+docker compose ps
+
+# Probar: http://localhost:8085/api/chat-messages
+
+# Cambiar puerto
+docker compose down
+$env:APP_PORT=9090
+docker compose up -d
+
+# Probar: http://localhost:9090/api/chat-messages

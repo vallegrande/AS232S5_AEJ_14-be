@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # Servicio de la aplicación Spring Boot
+  app:
+    # Imagen de Docker Hub (reemplaza con tu usuario de Docker Hub)
+    image: ${DOCKERHUB_USERNAME}/as232s5_aej_14-be:latest
+    container_name: vallegrande-chatbot-app
+    
+    # Configuración de puertos - Mapeo del puerto del host al contenedor
+    ports:
+      - "${APP_PORT:-8085}:8085"  # Puerto configurable mediante variable de entorno
+    
+    # Variables de entorno para la aplicación
+    environment:
+      - PORT=8085
+      - SERVER_URL=http://localhost:${APP_PORT:-8085}
+      - SPRING_R2DBC_URL=r2dbc:postgresql://ep-spring-mode-a839f09f-pooler.eastus2.azure.neon.tech/chat_messages?ssl=true
+      - SPRING_R2DBC_USERNAME=neondb_owner
+      - SPRING_R2DBC_PASSWORD=npg_IJdQEZuF4BN3
+    
+    # Reinicio automático en caso de fallo
+    restart: unless-stopped
+    
+    # Healthcheck para verificar que la aplicación está funcionando
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8085/api/chat-messages"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Red personalizada
+    networks:
+      - app-network
+
+# Definición de redes
+networks:
+  app-network:
+    driver: bridge
+
+# ============================================
+# 📌 ENDPOINTS PÚBLICOS DISPONIBLES (GET)
+# ============================================
+# 
+# Una vez que el contenedor esté corriendo, puedes probar estos endpoints:
+#
+# 1️⃣ Listar todos los mensajes de chat:
+#    GET http://localhost:8085/api/chat-messages
+#
+# 2️⃣ Listar todas las detecciones de edad:
+#    GET http://localhost:8085/api/age-detection
+#
+# 3️⃣ Buscar un mensaje específico por ID:
+#    GET http://localhost:8085/api/chat-messages/{id}
+#    Ejemplo: http://localhost:8085/api/chat-messages/1
+#
+# 4️⃣ Buscar una detección de edad por ID:
+#    GET http://localhost:8085/api/age-detection/{id}
+#    Ejemplo: http://localhost:8085/api/age-detection/1
+#
+# 5️⃣ Documentación Swagger UI:
+#    GET http://localhost:8085/swagger-ui.html
+#
+# 6️⃣ API Docs (OpenAPI JSON):
+#    GET http://localhost:8085/api-docs
+#
+# ============================================
+# 🔧 INSTRUCCIONES DE USO
+# ============================================
+#
+# Para levantar el servicio:
+#   docker-compose up -d
+#
+# Para ver los logs:
+#   docker-compose logs -f
+#
+# Para detener el servicio:
+#   docker-compose down
+#
+# Para usar un puerto diferente (ejemplo: 9090):
+#   APP_PORT=9090 docker-compose up -d
+#   o crear un archivo .env con: APP_PORT=9090
+#
+# Para reconstruir la imagen:
+#   docker-compose up -d --build
+#
+# ============================================
