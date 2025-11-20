@@ -3,8 +3,8 @@ version: '3.8'
 services:
   # Servicio de la aplicación Spring Boot
   app:
-    # Imagen de Docker Hub (reemplaza con tu usuario de Docker Hub)
-    image: ${DOCKERHUB_USERNAME}/as232s5_aej_14-be:latest
+    # Imagen de Docker Hub
+    image: jossuetorres/as232s5_aej_14-be:latest
     container_name: vallegrande-chatbot-app
     
     # Configuración de puertos - Mapeo del puerto del host al contenedor
@@ -42,9 +42,47 @@ networks:
 # ============================================
 # 📌 ENDPOINTS PÚBLICOS DISPONIBLES (GET)
 # ============================================
-
+# 
+# Una vez que el contenedor esté corriendo, puedes probar estos endpoints:
+#
 # 1️⃣ Listar todos los mensajes de chat:
 #    GET http://localhost:8085/api/chat-messages
 #
 # 2️⃣ Listar todas las detecciones de edad:
 #    GET http://localhost:8085/api/age-detection
+#
+# 3️⃣ Buscar un mensaje específico por ID:
+#    GET http://localhost:8085/api/chat-messages/{id}
+#    Ejemplo: http://localhost:8085/api/chat-messages/1
+#
+# 4️⃣ Buscar una detección de edad por ID:
+#    GET http://localhost:8085/api/age-detection/{id}
+#    Ejemplo: http://localhost:8085/api/age-detection/1
+#
+# 5️⃣ Documentación Swagger UI:
+#    GET http://localhost:8085/swagger-ui.html
+#
+# 6️⃣ API Docs (OpenAPI JSON):
+#    GET http://localhost:8085/api-docs
+#
+# ============================================
+# 🔧 INSTRUCCIONES DE USO
+# ============================================
+#
+# Para levantar el servicio:
+#   docker compose up -d
+#
+# Para ver los logs:
+#   docker compose logs -f
+#
+# Para detener el servicio:
+#   docker compose down
+#
+# Para usar un puerto diferente (ejemplo: 9090):
+#   $env:APP_PORT=9090
+#   docker compose up -d
+#
+# Para reconstruir la imagen:
+#   docker compose up -d --build
+#
+# ============================================
