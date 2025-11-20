@@ -30,7 +30,7 @@ services:
     ports:
       - "${FRONTEND_PORT:-3000}:80"
     environment:
-      - VITE_API_URL=http://localhost:8085
+      - VITE_API_URL=https://friendly-giggle-gwg4gg4p9w3v5v-9090.app.github.dev
     depends_on:
       - backend
     restart: unless-stopped
