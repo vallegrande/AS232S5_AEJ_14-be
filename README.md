@@ -1,60 +1,92 @@
 # AS232S5 - Jheferson Jossue Torres Humareda
 
-## 🚀 Proyecto Spring Boot WebFlux - Chatbot & Age Detection API
+## 🚀 Proyecto Full Stack - Chatbot & Age Detection
 
-API REST reactiva desarrollada con Spring Boot 3.5.5 y WebFlux, que implementa funcionalidades de chatbot y detección de edad.
+Aplicación completa con Frontend (React) y Backend (Spring Boot WebFlux) desplegada con Docker Compose.
 
-## 🐳 Docker Compose
+## 🐳 Despliegue con Docker Compose
 
-Este proyecto incluye configuración completa de Docker Compose con soporte para variables de entorno.
-
-### Inicio Rápido
+### Inicio Rápido (Local)
 
 ```bash
-# Levantar el servicio
-docker-compose up -d
+# Levantar frontend + backend
+docker compose up -d
 
-# Probar endpoint GET público
-curl http://localhost:8085/api/chat-messages
+# Ver estado
+docker compose ps
+
+# Ver logs
+docker compose logs -f
+
+# Detener
+docker compose down
 ```
 
-### Testeo con Diferentes Puertos
+**Servicios disponibles:**
+- Frontend: http://localhost:3000
+- Backend: http://localhost:8085
+- Swagger: http://localhost:8085/swagger-ui.html
+
+### 🌐 Uso en GitHub Codespaces
+
+Si estás ejecutando en GitHub Codespaces, configura la URL del backend:
 
 ```bash
-# Puerto 9090
-APP_PORT=9090 docker-compose up -d
+# Configura la URL de tu Codespace
+export BACKEND_URL=https://tu-codespace-nombre-8085.app.github.dev
 
-# Puerto 8080
-APP_PORT=8080 docker-compose up -d
+# Levanta los servicios
+docker compose up -d
 ```
 
-## 📡 Endpoints GET Públicos
+**Nota:** Reemplaza `tu-codespace-nombre-8085.app.github.dev` con la URL real de tu Codespace.
+
+## 📡 Endpoints GET Públicos del Backend
 
 - `GET /api/chat-messages` - Listar mensajes de chat
 - `GET /api/age-detection` - Listar detecciones de edad
-- `GET /swagger-ui.html` - Documentación interactiva
+- `GET /api/chat-messages/{id}` - Buscar mensaje por ID
+- `GET /api/age-detection/{id}` - Buscar detección por ID
+- `GET /swagger-ui.html` - Documentación interactiva Swagger
+- `GET /api-docs` - OpenAPI JSON
 
-## 📦 Imagen Docker
+## 📦 Imágenes Docker
 
 ```bash
-docker pull tu-usuario/as232s5_aej_14-be:latest
+# Backend
+docker pull jossuetorres/as232s5_aej_14-be:latest
+
+# Frontend
+docker pull jossuetorres/as232s5_aej_14-fe:latest
 ```
 
-## 📚 Documentación
+## 🔧 Configuración de Puertos (Opcional)
 
-- [Guía de Despliegue](DOCKER-DEPLOYMENT.md)
-- [Comandos Rápidos](COMANDOS-RAPIDOS.md)
-- [Pasos para Entregar](PASOS-PARA-ENTREGAR.md)
-- [Checklist de Entrega](CHECKLIST-ENTREGA.md)
+```bash
+# Cambiar puertos
+export BACKEND_PORT=9090
+export FRONTEND_PORT=4000
+docker compose up -d
+```
 
 ## 🛠️ Tecnologías
 
+**Backend:**
 - Spring Boot 3.5.5
 - Spring WebFlux (Programación Reactiva)
 - R2DBC PostgreSQL
-- Docker & Docker Compose
 - Swagger/OpenAPI
 - Lombok
+
+**Frontend:**
+- React + Vite
+- Axios
+- Notiflix
+
+**DevOps:**
+- Docker & Docker Compose
+- GitHub Actions (CI/CD)
+- Docker Hub
 
 ## 👨‍💻 Autor
 

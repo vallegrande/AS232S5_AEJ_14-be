@@ -30,7 +30,7 @@ services:
     ports:
       - "${FRONTEND_PORT:-3000}:80"
     environment:
-      - VITE_API_URL=https://friendly-giggle-gwg4gg4p9w3v5v-9090.app.github.dev
+      - VITE_API_URL=${BACKEND_URL:-http://localhost:8085}
     depends_on:
       - backend
     restart: unless-stopped
@@ -55,22 +55,39 @@ networks:
 # - GET http://localhost:8085/swagger-ui.html
 #
 # ============================================
-# 🔧 COMANDOS
+# 🔧 INSTRUCCIONES DE USO
 # ============================================
 #
-# Levantar ambos servicios:
-#   docker compose up -d
+# 1. Levantar ambos servicios:
+#    docker compose up -d
 #
-# Ver logs:
-#   docker compose logs -f
-#   docker compose logs -f backend
-#   docker compose logs -f frontend
+# 2. Ver logs:
+#    docker compose logs -f
 #
-# Detener:
-#   docker compose down
+# 3. Ver estado:
+#    docker compose ps
 #
-# Cambiar puertos:
-#   $env:BACKEND_PORT=9090
-#   $env:FRONTEND_PORT=4000
-#   docker compose up -d
+# 4. Detener:
+#    docker compose down
+#
+# ============================================
+# 🌐 USO EN GITHUB CODESPACES
+# ============================================
+#
+# Si estás en Codespaces, configura la URL del backend:
+#
+# export BACKEND_URL=https://tu-codespace-url-8085.app.github.dev
+# docker compose up -d
+#
+# Ejemplo:
+# export BACKEND_URL=https://friendly-giggle-gwg4gg4p9w3v5v-8085.app.github.dev
+# docker compose up -d
+#
+# ============================================
+# 🔧 CAMBIAR PUERTOS (OPCIONAL)
+# ============================================
+#
+# export BACKEND_PORT=9090
+# export FRONTEND_PORT=4000
+# docker compose up -d
 # ============================================
