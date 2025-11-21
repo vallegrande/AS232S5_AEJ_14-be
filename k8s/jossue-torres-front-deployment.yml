@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jossue-torres-front-deployment
+  labels:
+    app: jossue-torres-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jossue-torres-frontend
+  template:
+    metadata:
+      labels:
+        app: jossue-torres-frontend
+    spec:
+      containers:
+      - name: jossue-torres-frontend
+        image: jossuetorres/as232s5_aej_14-fe:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: VITE_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: jossue-torres-config
+              key: backend-url
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5

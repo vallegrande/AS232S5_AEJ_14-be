@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jossue-torres-back-deployment
+  labels:
+    app: jossue-torres-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jossue-torres-backend
+  template:
+    metadata:
+      labels:
+        app: jossue-torres-backend
+    spec:
+      containers:
+      - name: jossue-torres-backend
+        image: jossuetorres/as232s5_aej_14-be:latest
+        ports:
+        - containerPort: 8085
+        env:
+        - name: PORT
+          value: "8085"
+        - name: SERVER_URL
+          value: "http://localhost:8085"
+        - name: SPRING_R2DBC_URL
+          valueFrom:
+            secretKeyRef:
+              name: jossue-torres-db-secret
+              key: database-url
+        - name: SPRING_R2DBC_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: jossue-torres-db-secret
+              key: database-username
+        - name: SPRING_R2DBC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: jossue-torres-db-secret
+              key: database-password
+        livenessProbe:
+          httpGet:
+            path: /api/chat-messages
+            port: 8085
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/chat-messages
+            port: 8085
+          initialDelaySeconds: 40
+          periodSeconds: 5
